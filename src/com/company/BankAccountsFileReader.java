@@ -2,20 +2,18 @@ package com.company;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.*;
 
 public class BankAccountsFileReader {
 
-    private static final int DIGIT_OCR_LENGHT = 3;
-    private static final int DIGITS_COUNT_IN_LINE = 9;
+    private static final int DIGITLENGHT = 3;
+    private static final int COUNTNUMBERLENGHT = 9;
     private File fileToRead;
     private Hashtable<String, String> OCRDigitsMapping;
 
-    private static final String ILLEGIBLE_OCR_DIGIT = "?";
+    private static final String INVALIDDIGIT = "?";
 
     private final String ZERO= " _ "+
                               "| |"+
@@ -81,15 +79,14 @@ public class BankAccountsFileReader {
             if(lineIndex !=0 && lineIndex%4==0){
                 List<String>digitsFromLine=getAccountsDigitsFromLines(digitLines);
                 String bankAccountNumber=getAccountNumberFromOCR(digitsFromLine);
-                System.out.println(bankAccountNumber);
                 digitLines.clear();
                 if(lineIndex<fileLines.size())
                 digitLines.add(fileLines.get(lineIndex));
+                accounts.add(bankAccountNumber);
             }else{
                 digitLines.add(fileLines.get(lineIndex));
             }
         }
-
         return accounts;
     }
 
@@ -102,16 +99,16 @@ public class BankAccountsFileReader {
     }
 
     private String parseDigit(String digitOCR){
-        return OCRDigitsMapping.getOrDefault(digitOCR,ILLEGIBLE_OCR_DIGIT);
+        return OCRDigitsMapping.getOrDefault(digitOCR,INVALIDDIGIT);
     }
 
     public List<String> getAccountsDigitsFromLines(List<String> digitLines) throws Exception {
         List<String> digits=new ArrayList<>();
-        for(int digitIndex=0;digitIndex<DIGITS_COUNT_IN_LINE;digitIndex++){
+        for(int digitIndex=0;digitIndex<COUNTNUMBERLENGHT;digitIndex++){
             StringBuilder stringBuilder=new StringBuilder();
-            for(int i=0;i<DIGIT_OCR_LENGHT;i++){
+            for(int i=0;i<DIGITLENGHT;i++){
                 String line=digitLines.get(i);
-                stringBuilder.append(line, digitIndex*DIGIT_OCR_LENGHT, digitIndex*DIGIT_OCR_LENGHT+DIGIT_OCR_LENGHT);
+                stringBuilder.append(line, digitIndex*DIGITLENGHT, digitIndex*DIGITLENGHT+DIGITLENGHT);
             }
             digits.add(stringBuilder.toString());
         }
